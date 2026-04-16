@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Add Student</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- Header -->
+  <header class="site-header">
+    <a class="logo" href="index.html">Scholar<span>Base</span></a>
+    <a class="btn btn-ghost" href="index.html">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 13L5 8l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back
+    </a>
+  </header>
+
+  <!-- Form card -->
+  <div class="form-card">
+    <h2 class="form-title">Add New Student</h2>
+
+    <div class="form-group">
+      <label for="name">Full Name</label>
+      <input type="text" id="name" placeholder="e.g. Aditya Sharma" autocomplete="off" />
+    </div>
+
+    <div class="form-group">
+      <label for="age">Age</label>
+      <input type="number" id="age" min="1" max="100" placeholder="e.g. 20" />
+    </div>
+
+    <div class="form-group">
+      <label for="branch">Branch</label>
+      <input type="text" id="branch" placeholder="e.g. Computer Science" />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="e.g. student@college.edu" />
+    </div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary" id="submit-btn" onclick="submitForm()">
+        Submit
+      </button>
+      <a class="btn btn-outline" href="index.html">Cancel</a>
+    </div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div id="toast"></div>
+
+<script src="../js/api.js"></script>
+<script>
+  async function submitForm() {
+    const name   = document.getElementById("name").value.trim();
+    const age    = parseInt(document.getElementById("age").value, 10);
+    const branch = document.getElementById("branch").value.trim();
+    const email  = document.getElementById("email").value.trim();
+
+    // Basic client-side validation
+    if (!name || !branch || !email) {
+      showToast("Please fill in all fields.", "error"); return;
+    }
+    if (isNaN(age) || age < 1 || age > 100) {
+      showToast("Please enter a valid age (1–100).", "error"); return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showToast("Please enter a valid email address.", "error"); return;
+    }
+
+    const btn = document.getElementById("submit-btn");
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Saving…';
+
+    try {
+      await api.post("/students", { name, age, branch, email });
+      sessionStorage.setItem("flash", JSON.stringify({ msg: "Student added successfully!", type: "success" }));
+      window.location.href = "index.html";
+    } catch (err) {
+      showToast(err.message, "error");
+      btn.disabled = false;
+      btn.textContent = "Submit";
+    }
+  }
+
+  // Allow Enter key to submit
+  document.addEventListener("keydown", e => {
+    if (e.key === "Enter") submitForm();
+  });
+</script>
+</body>
+</html>
