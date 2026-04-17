@@ -1,5 +1,5 @@
 // ── Config ────────────────────────────────────────────────────
-const API_BASE = "http://127.0.0.1:8000";
+const API_BASE = "https://project-1-backend-zytq.onrender.com";
 
 // ── API helpers ───────────────────────────────────────────────
 const api = {
